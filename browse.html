@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Разглеждай профили - FFM Club</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .like-btn {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            background: white;
+            border: 2px solid #d81b60;
+            color: #d81b60;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 10;
+        }
+        .like-btn:hover {
+            background: #d81b60;
+            color: white;
+            transform: scale(1.1);
+        }
+        .like-btn.liked {
+            background: #d81b60;
+            color: white;
+        }
+        .profile-card {
+            position: relative;
+        }
+        .match-notification {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: linear-gradient(135deg, #d81b60 0%, #8e24aa 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            z-index: 10000;
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="loading" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center;">
+        <div style="background: white; padding: 30px; border-radius: 10px; text-align: center;">
+            <h3>Зареждане...</h3>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <h1>FFM<span>Club</span></h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="browse.html" class="active">Разглеждай</a></li>
+                <li><a href="messages.html">Съобщения</a></li>
+                <li><a href="likes.html">Likes</a></li>
+                <li><a href="#" id="logout-btn" class="btn-register">Изход</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Browse Section -->
+    <section class="profiles">
+        <div class="container">
+            <h2 class="section-title">Разглеждай профили</h2>
+            
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <div class="search-filters">
+                    <select id="filter-type">
+                        <option value="all">Всички</option>
+                        <option value="couple">Двойки</option>
+                        <option value="woman">Жени</option>
+                    </select>
+                    <select id="filter-city">
+                        <option value="all">Всички градове</option>
+                        <option value="sofia">София</option>
+                        <option value="plovdiv">Пловдив</option>
+                        <option value="varna">Варна</option>
+                        <option value="burgas">Бургас</option>
+                        <option value="ruse">Русе</option>
+                        <option value="stara-zagora">Стара Загора</option>
+                    </select>
+                    <input type="number" id="filter-age-from" placeholder="Възраст от" min="18" max="99">
+                    <input type="number" id="filter-age-to" placeholder="Възраст до" min="18" max="99">
+                    <label style="display: flex; align-items: center; gap: 5px;">
+                        <input type="checkbox" id="filter-verified">
+                        Само верифицирани
+                    </label>
+                    <button id="search-btn">🔍 Търси</button>
+                </div>
+            </div>
+
+            <!-- Profiles Grid -->
+            <div class="profiles-grid" id="profiles-grid">
+                <p style="text-align: center; width: 100%; color: #666;">Зареждане на профили...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="about.html">За нас</a>
+                <a href="contact.html">Контакти</a>
+                <a href="#">Условия за ползване</a>
+                <a href="#">Поверителност</a>
+            </div>
+            <p>&copy; 2026 FFM Club. Всички права запазени.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script type="module">
+        import { getCurrentUser, checkAuthState, logoutUser, getUserProfile } from './js/auth.js';
+        import { getAllUsers, searchUsers, likeUser, unlikeUser } from './js/database.js';
+
+        const loading = document.getElementById('loading');
+        let currentUser = null;
+        let userLikes = [];
+
+        // Check auth
+        checkAuthState(async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            currentUser = user;
+            
+            // Get current user's likes
+            const profileResult = await getUserProfile(user.uid);
+            if (profileResult.success) {
+                userLikes = profileResult.data.likes || [];
+            }
+            
+            // Load all users
+            await loadUsers();
+        });
+
+        async function loadUsers(filters = null) {
+            loading.style.display = 'flex';
+            
+            let result;
+            if (filters) {
+                result = await searchUsers(filters);
+            } else {
+                result = await getAllUsers(50);
+            }
+            
+            loading.style.display = 'none';
+            
+            if (result.success) {
+                displayUsers(result.users);
+            } else {
+                alert('Грешка при зареждане: ' + result.error);
+            }
+        }
+
+        function displayUsers(users) {
+            const grid = document.getElementById('profiles-grid');
+            grid.innerHTML = '';
+            
+            // Filter out current user
+            const filteredUsers = users.filter(u => u.id !== currentUser.uid);
+            
+            if (filteredUsers.length === 0) {
+                grid.innerHTML = '<p style="text-align: center; width: 100%; color: #666;">Няма намерени профили с тези критерии.</p>';
+                return;
+            }
+            
+            filteredUsers.forEach(user => {
+                const isLiked = userLikes.includes(user.id);
+                
+                const card = document.createElement('div');
+                card.className = 'profile-card';
+                card.innerHTML = `
+                    <div class="profile-image">
+                        ${user.photoURL ? 
+                            `<img src="${user.photoURL}" style="width:100%;height:100%;object-fit:cover;">` : 
+                            '<span style="font-size: 80px;">👤</span>'
+                        }
+                        ${user.verified ? '<span class="verified-badge">✓ Верифициран</span>' : ''}
+                    </div>
+                    <div class="profile-info">
+                        <h3 class="profile-name">${user.username}</h3>
+                        <p class="profile-details">📍 ${user.city} | ${user.age} г.</p>
+                        <p class="profile-details">${user.about ? user.about.substring(0, 80) + '...' : 'Няма описание'}</p>
+                        <span class="profile-type">${user.accountType === 'couple' ? 'Двойка' : 'Жена'}</span>
+                    </div>
+                    <button class="like-btn ${isLiked ? 'liked' : ''}" data-user-id="${user.id}">
+                        ${isLiked ? '❤️' : '🤍'}
+                    </button>
+                `;
+                
+                // Click on card to view profile
+                card.querySelector('.profile-info').onclick = () => {
+                    window.location.href = `profile-view.html?userId=${user.id}`;
+                };
+                
+                grid.appendChild(card);
+            });
+            
+            // Add like button listeners
+            document.querySelectorAll('.like-btn').forEach(btn => {
+                btn.addEventListener('click', handleLike);
+            });
+        }
+
+        async function handleLike(e) {
+            e.stopPropagation();
+            const btn = e.currentTarget;
+            const targetUserId = btn.dataset.userId;
+            const isLiked = btn.classList.contains('liked');
+            
+            loading.style.display = 'flex';
+            
+            let result;
+            if (isLiked) {
+                result = await unlikeUser(currentUser.uid, targetUserId);
+                if (result.success) {
+                    btn.classList.remove('liked');
+                    btn.textContent = '🤍';
+                    userLikes = userLikes.filter(id => id !== targetUserId);
+                }
+            } else {
+                result = await likeUser(currentUser.uid, targetUserId);
+                if (result.success) {
+                    btn.classList.add('liked');
+                    btn.textContent = '❤️';
+                    userLikes.push(targetUserId);
+                    
+                    // Check for match
+                    if (result.match) {
+                        showMatchNotification();
+                    }
+                }
+            }
+            
+            loading.style.display = 'none';
+            
+            if (!result.success) {
+                alert('Грешка: ' + result.error);
+            }
+        }
+
+        function showMatchNotification() {
+            const notification = document.createElement('div');
+            notification.className = 'match-notification';
+            notification.innerHTML = `
+                <h3 style="margin: 0 0 10px 0;">🎉 It's a Match!</h3>
+                <p style="margin: 0;">Имате взаимен like! Можете да започнете разговор.</p>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+
+        // Search functionality
+        document.getElementById('search-btn').addEventListener('click', async () => {
+            const filters = {
+                accountType: document.getElementById('filter-type').value,
+                city: document.getElementById('filter-city').value,
+                ageFrom: parseInt(document.getElementById('filter-age-from').value) || null,
+                ageTo: parseInt(document.getElementById('filter-age-to').value) || null,
+                verified: document.getElementById('filter-verified').checked
+            };
+            
+            // Convert "all" to null
+            if (filters.accountType === 'all') filters.accountType = null;
+            if (filters.city === 'all') filters.city = null;
+            
+            await loadUsers(filters);
+        });
+
+        // Logout
+        document.getElementById('logout-btn').addEventListener('click', async (e) => {
+            e.preventDefault();
+            await logoutUser();
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>

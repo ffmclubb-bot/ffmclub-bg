@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Настройки - FFM Club</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .dashboard-container {
+            display: flex;
+            max-width: 1400px;
+            margin: 20px auto;
+            gap: 20px;
+            padding: 0 20px;
+        }
+        .sidebar {
+            width: 250px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 80px;
+        }
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar-menu li {
+            margin-bottom: 10px;
+        }
+        .sidebar-menu a {
+            display: block;
+            padding: 12px 15px;
+            color: #333;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: linear-gradient(135deg, #d81b60 0%, #8e24aa 100%);
+            color: white;
+        }
+        .main-content {
+            flex: 1;
+        }
+        .settings-card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .settings-card h3 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        .setting-item {
+            margin-bottom: 25px;
+        }
+        .setting-label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .setting-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .setting-input:focus {
+            outline: none;
+            border-color: #d81b60;
+        }
+        .save-btn {
+            background: linear-gradient(135deg, #d81b60 0%, #8e24aa 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            transition: transform 0.3s;
+        }
+        .save-btn:hover {
+            transform: translateY(-2px);
+        }
+        .danger-zone {
+            background: #fff5f5;
+            border: 1px solid #ffcccc;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+        .danger-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .danger-btn:hover {
+            background: #c82333;
+        }
+        .switch-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background: linear-gradient(135deg, #d81b60 0%, #8e24aa 100%);
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+    </style>
+</head>
+<body>
+    <div id="loading" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center;">
+        <div style="background: white; padding: 30px; border-radius: 10px; text-align: center;">
+            <h3>Зареждане...</h3>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <h1>FFM<span>Club</span></h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="browse.html">Разглеждай</a></li>
+                <li><a href="messages.html">Съобщения</a></li>
+                <li><a href="likes.html">Likes</a></li>
+                <li><a href="#" id="logout-btn" class="btn-register">Изход</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Settings Content -->
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html">🏠 Начало</a></li>
+                <li><a href="profile.html">👤 Моят профил</a></li>
+                <li><a href="browse.html">🔍 Разглеждай</a></li>
+                <li><a href="messages.html">💬 Съобщения</a></li>
+                <li><a href="likes.html">❤️ Likes</a></li>
+                <li><a href="matches.html">✨ Matches</a></li>
+                <li><a href="favorites.html">⭐ Favorites</a></li>
+                <li><a href="settings.html" class="active">⚙️ Настройки</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Profile Settings -->
+            <div class="settings-card">
+                <h3>⚙️ Настройки на профила</h3>
+                
+                <div class="setting-item">
+                    <label class="setting-label">Потребителско име</label>
+                    <input type="text" class="setting-input" id="username" placeholder="Твоето потребителско име">
+                </div>
+
+                <div class="setting-item">
+                    <label class="setting-label">Email</label>
+                    <input type="email" class="setting-input" id="email" disabled placeholder="email@example.com">
+                    <small style="color: #999;">Email адресът не може да бъде променен</small>
+                </div>
+
+                <div class="setting-item">
+                    <label class="setting-label">Възраст</label>
+                    <input type="number" class="setting-input" id="age" min="18" max="99">
+                </div>
+
+                <div class="setting-item">
+                    <label class="setting-label">Град</label>
+                    <select class="setting-input" id="city">
+                        <option value="">Избери град</option>
+                        <option value="sofia">София</option>
+                        <option value="plovdiv">Пловдив</option>
+                        <option value="varna">Варна</option>
+                        <option value="burgas">Бургас</option>
+                        <option value="ruse">Русе</option>
+                        <option value="stara-zagora">Стара Загора</option>
+                        <option value="pleven">Плевен</option>
+                    </select>
+                </div>
+
+                <div class="setting-item">
+                    <label class="setting-label">За мен / За нас</label>
+                    <textarea class="setting-input" id="about" rows="4" placeholder="Разкажи нещо за себе си..."></textarea>
+                </div>
+
+                <div class="setting-item">
+                    <label class="setting-label">Интереси</label>
+                    <input type="text" class="setting-input" id="interests" placeholder="Пътувания, музика, спорт...">
+                </div>
+
+                <button class="save-btn" id="save-profile-btn">💾 Запази промените</button>
+            </div>
+
+            <!-- Privacy Settings -->
+            <div class="settings-card">
+                <h3>🔒 Настройки за поверителност</h3>
+                
+                <div class="setting-item">
+                    <div class="switch-container">
+                        <label class="switch">
+                            <input type="checkbox" id="show-online">
+                            <span class="slider"></span>
+                        </label>
+                        <label class="setting-label" style="margin: 0;">Покажи онлайн статус</label>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="switch-container">
+                        <label class="switch">
+                            <input type="checkbox" id="show-viewed">
+                            <span class="slider"></span>
+                        </label>
+                        <label class="setting-label" style="margin: 0;">Покажи кой е видял профила ми</label>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="switch-container">
+                        <label class="switch">
+                            <input type="checkbox" id="allow-messages">
+                            <span class="slider"></span>
+                        </label>
+                        <label class="setting-label" style="margin: 0;">Разреши съобщения от всички</label>
+                    </div>
+                </div>
+
+                <button class="save-btn" id="save-privacy-btn">💾 Запази промените</button>
+            </div>
+
+            <!-- Password Change -->
+            <div class="settings-card">
+                <h3>🔑 Смяна на парола</h3>
+                
+                <div class="setting-item">
+                    <label class="setting-label">Нова парола</label>
+                    <input type="password" class="setting-input" id="new-password" placeholder="Минимум 8 символа">
+                </div>
+
+                <div class="setting-item">
+                    <label class="setting-label">Потвърди новата парола</label>
+                    <input type="password" class="setting-input" id="confirm-password" placeholder="Повтори паролата">
+                </div>
+
+                <button class="save-btn" id="change-password-btn">🔑 Смени паролата</button>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="settings-card">
+                <h3>⚠️ Опасна зона</h3>
+                
+                <div class="danger-zone">
+                    <h4 style="margin-top: 0; color: #dc3545;">Изтриване на акаунт</h4>
+                    <p style="color: #666; margin-bottom: 15px;">
+                        Веднъж изтрит, акаунтът не може да бъде възстановен. Всички данни ще бъдат изтрити перманентно.
+                    </p>
+                    <button class="danger-btn" id="delete-account-btn">🗑️ Изтрий акаунта</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2026 FFM Club. Всички права запазени.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script type="module">
+        import { getCurrentUser, checkAuthState, getUserProfile, updateUserProfile, logoutUser } from './js/auth.js';
+        import { updatePassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { db } from './js/firebase-config.js';
+
+        const loading = document.getElementById('loading');
+        let currentUser = null;
+
+        // Check auth
+        checkAuthState(async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            currentUser = user;
+            await loadUserSettings();
+        });
+
+        async function loadUserSettings() {
+            loading.style.display = 'flex';
+            
+            const result = await getUserProfile(currentUser.uid);
+            
+            if (result.success) {
+                const userData = result.data;
+                
+                document.getElementById('username').value = userData.username || '';
+                document.getElementById('email').value = userData.email || '';
+                document.getElementById('age').value = userData.age || '';
+                document.getElementById('city').value = userData.city || '';
+                document.getElementById('about').value = userData.about || '';
+                document.getElementById('interests').value = userData.interests || '';
+                
+                // Privacy settings (defaults to true)
+                document.getElementById('show-online').checked = userData.showOnline !== false;
+                document.getElementById('show-viewed').checked = userData.showViewed !== false;
+                document.getElementById('allow-messages').checked = userData.allowMessages !== false;
+            }
+            
+            loading.style.display = 'none';
+        }
+
+        // Save profile settings
+        document.getElementById('save-profile-btn').addEventListener('click', async () => {
+            loading.style.display = 'flex';
+            
+            const updates = {
+                username: document.getElementById('username').value,
+                age: parseInt(document.getElementById('age').value),
+                city: document.getElementById('city').value,
+                about: document.getElementById('about').value,
+                interests: document.getElementById('interests').value
+            };
+            
+            const result = await updateUserProfile(currentUser.uid, updates);
+            
+            loading.style.display = 'none';
+            
+            if (result.success) {
+                alert('✅ Профилът е обновен успешно!');
+            } else {
+                alert('❌ Грешка: ' + result.error);
+            }
+        });
+
+        // Save privacy settings
+        document.getElementById('save-privacy-btn').addEventListener('click', async () => {
+            loading.style.display = 'flex';
+            
+            const updates = {
+                showOnline: document.getElementById('show-online').checked,
+                showViewed: document.getElementById('show-viewed').checked,
+                allowMessages: document.getElementById('allow-messages').checked
+            };
+            
+            const result = await updateUserProfile(currentUser.uid, updates);
+            
+            loading.style.display = 'none';
+            
+            if (result.success) {
+                alert('✅ Настройките са запазени!');
+            } else {
+                alert('❌ Грешка: ' + result.error);
+            }
+        });
+
+        // Change password
+        document.getElementById('change-password-btn').addEventListener('click', async () => {
+            const newPass = document.getElementById('new-password').value;
+            const confirmPass = document.getElementById('confirm-password').value;
+            
+            if (!newPass || !confirmPass) {
+                alert('❌ Моля попълни всички полета!');
+                return;
+            }
+            
+            if (newPass !== confirmPass) {
+                alert('❌ Паролите не съвпадат!');
+                return;
+            }
+            
+            if (newPass.length < 8) {
+                alert('❌ Паролата трябва да е минимум 8 символа!');
+                return;
+            }
+            
+            loading.style.display = 'flex';
+            
+            try {
+                await updatePassword(currentUser, newPass);
+                alert('✅ Паролата е сменена успешно!');
+                document.getElementById('new-password').value = '';
+                document.getElementById('confirm-password').value = '';
+            } catch (error) {
+                alert('❌ Грешка: ' + error.message);
+            }
+            
+            loading.style.display = 'none';
+        });
+
+        // Delete account
+        document.getElementById('delete-account-btn').addEventListener('click', async () => {
+            const confirmed = confirm('⚠️ ВНИМАНИЕ! Сигурен ли си, че искаш да изтриеш акаунта си? Това действие е необратимо!');
+            
+            if (!confirmed) return;
+            
+            const doubleConfirm = confirm('🚨 ПОСЛЕДНА ПРОВЕРКА! Всички данни ще бъдат изтрити завинаги. Продължаваш ли?');
+            
+            if (!doubleConfirm) return;
+            
+            loading.style.display = 'flex';
+            
+            try {
+                // Delete user document from Firestore
+                await deleteDoc(doc(db, 'users', currentUser.uid));
+                
+                // Delete auth account
+                await currentUser.delete();
+                
+                alert('Акаунтът е изтрит успешно.');
+                window.location.href = 'index.html';
+            } catch (error) {
+                loading.style.display = 'none';
+                alert('❌ Грешка при изтриване: ' + error.message);
+            }
+        });
+
+        // Logout
+        document.getElementById('logout-btn').addEventListener('click', async (e) => {
+            e.preventDefault();
+            await logoutUser();
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>

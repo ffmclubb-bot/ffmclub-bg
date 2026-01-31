@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Съобщения - FFM Club</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background: #f5f5f5;
+        }
+        
+        .messages-layout {
+            display: flex;
+            max-width: 1400px;
+            margin: 20px auto;
+            height: calc(100vh - 140px);
+            gap: 0;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+        
+        .conversations-sidebar {
+            width: 350px;
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            background: #fafafa;
+        }
+        
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            background: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .back-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .back-btn:hover {
+            color: #333;
+        }
+        
+        .sidebar-header h2 {
+            margin: 0;
+            font-size: 20px;
+            color: #333;
+        }
+        
+        .conversations-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .conversation-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            gap: 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-bottom: 1px solid #f0f0f0;
+            background: white;
+        }
+        
+        .conversation-item:hover {
+            background: #f5f5f5;
+        }
+        
+        .conversation-item.active {
+            background: linear-gradient(135deg, rgba(216, 27, 96, 0.1) 0%, rgba(142, 36, 170, 0.1) 100%);
+            border-left: 3px solid #d81b60;
+        }
+        
+        .conv-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        
+        .conv-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .conv-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        
+        .conv-preview {
+            font-size: 13px;
+            color: #999;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-header {
+            padding: 20px 30px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: white;
+        }
+        
+        .chat-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+        
+        .chat-user-info h3 {
+            margin: 0 0 4px 0;
+            color: #333;
+            font-size: 18px;
+        }
+        
+        .chat-user-info p {
+            margin: 0;
+            color: #666;
+            font-size: 13px;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: #f9f9f9;
+        }
+        
+        .message {
+            display: flex;
+            gap: 10px;
+            max-width: 65%;
+            animation: slideIn 0.2s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .message.sent {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+        
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+        
+        .message-content {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .message-bubble {
+            background: white;
+            padding: 12px 16px;
+            border-radius: 18px;
+            word-wrap: break-word;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            position: relative;
+        }
+        
+        .message.sent .message-bubble {
+            background: linear-gradient(135deg, #d81b60 0%, #8e24aa 100%);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .message.received .message-bubble {
+            border-bottom-left-radius: 4px;
+        }
+        
+        .message-time {
+            font-size: 11px;
+            color: #999;
+            padding: 0 8px;
+        }
+        
+        .message.sent .message-time {
+            text-align: right;
+            color: #bbb;
+        }
+        
+        .chat-input-container {
+            padding: 20px 30px;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 12px;
+            background: white;
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 14px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 15px;
+            transition: border-color 0.3s;
+        }
+        
+        .chat-input:focus {
+            outline: none;
+            border-color: #d81b60;
+        }
+        
+        .send-btn {
+            background: linear-gradient(135deg, #d81b60 0%, #8e24aa 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 15px;
+        }
+        
+        .send-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(216, 27, 96, 0.3);
+        }
+        
+        .send-btn:active {
+            transform: scale(0.98);
+        }
+        
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 12px 16px;
+            background: white;
+            border-radius: 18px;
+            width: 60px;
+        }
+        
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #999;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+        
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.7;
+            }
+            30% {
+                transform: translateY(-8px);
+                opacity: 1;
+            }
+        }
+        
+        .empty-messages {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: #999;
+        }
+        
+        .empty-messages-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+        
+        @media (max-width: 768px) {
+            .conversations-sidebar {
+                display: none;
+            }
+            
+            .messages-layout {
+                height: calc(100vh - 100px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <h1>FFM<span>Club</span></h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="browse.html">Разглеждай</a></li>
+                <li><a href="messages.html" class="active">Съобщения</a></li>
+                <li><a href="likes.html">Likes</a></li>
+                <li><a href="#" id="logout-btn" class="btn-register">Изход</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Messages Layout -->
+    <div style="padding: 0 20px;">
+        <div class="messages-layout">
+            <!-- Conversations Sidebar -->
+            <div class="conversations-sidebar">
+                <div class="sidebar-header">
+                    <button class="back-btn" onclick="window.location.href='dashboard.html'">←</button>
+                    <h2>Съобщения</h2>
+                </div>
+                <div class="conversations-list" id="conversations-sidebar-list">
+                    <div style="padding: 20px; text-align: center; color: #999; font-size: 14px;">
+                        Зареждане...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Container -->
+            <div class="chat-container">
+                <!-- Chat Header -->
+                <div class="chat-header">
+                    <div class="chat-avatar" id="chat-avatar">👤</div>
+                    <div class="chat-user-info">
+                        <h3 id="chat-username">Зареждане...</h3>
+                        <p id="chat-user-details"></p>
+                    </div>
+                </div>
+
+                <!-- Messages -->
+                <div class="chat-messages" id="chat-messages">
+                    <div class="empty-messages">
+                        <div class="empty-messages-icon">💬</div>
+                        <p>Зареждане на съобщения...</p>
+                    </div>
+                </div>
+
+                <!-- Input -->
+                <div class="chat-input-container">
+                    <input type="text" class="chat-input" id="message-input" placeholder="Напиши съобщение...">
+                    <button class="send-btn" id="send-btn">📤 Изпрати</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2026 FFM Club. Всички права запазени.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script type="module">
+        import { getCurrentUser, checkAuthState, getUserProfile } from './js/auth.js';
+        import { getUserById } from './js/database.js';
+        import { getOrCreateConversation, sendMessage, listenToMessages, markMessagesAsRead, getUserConversations } from './js/chat.js';
+
+        let currentUser = null;
+        let currentUserProfile = null;
+        let otherUser = null;
+        let conversationId = null;
+        let unsubscribe = null;
+
+        // Get user ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const otherUserId = urlParams.get('userId');
+
+        if (!otherUserId) {
+            alert('Грешка: Липсва ID на потребител');
+            window.location.href = 'messages.html';
+        }
+
+        // Check auth
+        checkAuthState(async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            currentUser = user;
+            
+            // Get current user profile
+            const profileResult = await getUserProfile(user.uid);
+            if (profileResult.success) {
+                currentUserProfile = profileResult.data;
+            }
+            
+            await initChat();
+            await loadConversationsSidebar();
+        });
+
+        async function initChat() {
+            // Get other user's profile
+            const userResult = await getUserById(otherUserId);
+            
+            if (!userResult.success) {
+                alert('Потребителят не е намерен');
+                window.location.href = 'messages.html';
+                return;
+            }
+            
+            otherUser = userResult.user;
+            
+            // Update UI
+            document.getElementById('chat-username').textContent = otherUser.username;
+            document.getElementById('chat-user-details').textContent = `${otherUser.city} • ${otherUser.age} г. • ${otherUser.accountType === 'couple' ? 'Двойка' : 'Жена'}`;
+            
+            if (otherUser.photoURL) {
+                document.getElementById('chat-avatar').innerHTML = `<img src="${otherUser.photoURL}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+            }
+            
+            // Get or create conversation
+            const convResult = await getOrCreateConversation(currentUser.uid, otherUserId);
+            
+            if (convResult.success) {
+                conversationId = convResult.conversationId;
+                
+                // Listen to messages in real-time
+                unsubscribe = listenToMessages(conversationId, (messages) => {
+                    displayMessages(messages);
+                    markMessagesAsRead(conversationId, currentUser.uid);
+                });
+            }
+        }
+
+        async function loadConversationsSidebar() {
+            const result = await getUserConversations(currentUser.uid);
+            
+            if (result.success && result.conversations.length > 0) {
+                const sidebar = document.getElementById('conversations-sidebar-list');
+                sidebar.innerHTML = '';
+                
+                for (const conv of result.conversations) {
+                    const otherUserIdInConv = conv.participants.find(id => id !== currentUser.uid);
+                    const userResult = await getUserById(otherUserIdInConv);
+                    
+                    if (userResult.success) {
+                        const user = userResult.user;
+                        const isActive = otherUserIdInConv === otherUserId;
+                        
+                        const convItem = document.createElement('div');
+                        convItem.className = `conversation-item ${isActive ? 'active' : ''}`;
+                        convItem.innerHTML = `
+                            <div class="conv-avatar">
+                                ${user.photoURL ? 
+                                    `<img src="${user.photoURL}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">` : 
+                                    '👤'
+                                }
+                            </div>
+                            <div class="conv-info">
+                                <div class="conv-name">${user.username}</div>
+                                <div class="conv-preview">${conv.lastMessage || 'Няма съобщения'}</div>
+                            </div>
+                        `;
+                        
+                        convItem.onclick = () => {
+                            window.location.href = `chat.html?userId=${otherUserIdInConv}`;
+                        };
+                        
+                        sidebar.appendChild(convItem);
+                    }
+                }
+            }
+        }
+
+        function displayMessages(messages) {
+            const container = document.getElementById('chat-messages');
+            container.innerHTML = '';
+            
+            if (messages.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-messages">
+                        <div class="empty-messages-icon">👋</div>
+                        <h3>Започни разговор</h3>
+                        <p>Изпрати първото си съобщение до ${otherUser.username}</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            messages.forEach(msg => {
+                const isSent = msg.senderId === currentUser.uid;
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${isSent ? 'sent' : 'received'}`;
+                
+                const avatar = isSent ? 
+                    (currentUserProfile?.photoURL || '👤') : 
+                    (otherUser.photoURL || '👤');
+                
+                messageDiv.innerHTML = `
+                    <div class="message-avatar">
+                        ${avatar.startsWith('http') ? 
+                            `<img src="${avatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">` : 
+                            avatar
+                        }
+                    </div>
+                    <div class="message-content">
+                        <div class="message-bubble">${escapeHtml(msg.text)}</div>
+                        <div class="message-time">${formatTime(msg.timestamp)}</div>
+                    </div>
+                `;
+                
+                container.appendChild(messageDiv);
+            });
+            
+            // Scroll to bottom
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatTime(timestamp) {
+            if (!timestamp) return '';
+            
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            const now = new Date();
+            const diff = now - date;
+            
+            if (diff < 60000) return 'Сега';
+            if (diff < 3600000) return Math.floor(diff / 60000) + ' мин';
+            if (diff < 86400000) {
+                return date.toLocaleTimeString('bg-BG', { hour: '2-digit', minute: '2-digit' });
+            }
+            if (diff < 172800000) return 'Вчера ' + date.toLocaleTimeString('bg-BG', { hour: '2-digit', minute: '2-digit' });
+            
+            return date.toLocaleDateString('bg-BG', { day: 'numeric', month: 'short' }) + ' ' + 
+                   date.toLocaleTimeString('bg-BG', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        // Send message
+        async function handleSendMessage() {
+            const input = document.getElementById('message-input');
+            const messageText = input.value.trim();
+            
+            if (!messageText) return;
+            
+            const result = await sendMessage(conversationId, currentUser.uid, otherUserId, messageText);
+            
+            if (result.success) {
+                input.value = '';
+                input.focus();
+            } else {
+                alert('Грешка при изпращане: ' + result.error);
+            }
+        }
+
+        document.getElementById('send-btn').addEventListener('click', handleSendMessage);
+        
+        document.getElementById('message-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSendMessage();
+            }
+        });
+
+        // Auto-focus input
+        document.getElementById('message-input').focus();
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (unsubscribe) {
+                unsubscribe();
+            }
+        });
+    </script>
+</body>
+</html>

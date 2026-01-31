@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - FFM Club</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .dashboard-container {
+            display: flex;
+            max-width: 1400px;
+            margin: 20px auto;
+            gap: 20px;
+            padding: 0 20px;
+        }
+        .sidebar {
+            width: 250px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 80px;
+        }
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar-menu li {
+            margin-bottom: 10px;
+        }
+        .sidebar-menu a {
+            display: block;
+            padding: 12px 15px;
+            color: #333;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: linear-gradient(135deg, #d81b60 0%, #8e24aa 100%);
+            color: white;
+        }
+        .main-content {
+            flex: 1;
+        }
+        .user-profile-header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+        .profile-photo-container {
+            position: relative;
+        }
+        .profile-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: white;
+        }
+        .upload-photo-btn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: #d81b60;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+        .profile-info-header h2 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .profile-stats {
+            display: flex;
+            gap: 30px;
+            margin-top: 15px;
+        }
+        .stat {
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #d81b60;
+        }
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+        .messages-container,
+        .matches-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .message-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .message-item:hover {
+            background: #f9f9f9;
+        }
+        .message-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            margin-right: 15px;
+        }
+        .message-content {
+            flex: 1;
+        }
+        .message-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .message-preview {
+            color: #666;
+            font-size: 14px;
+        }
+        .message-time {
+            font-size: 12px;
+            color: #999;
+        }
+        .unread-badge {
+            background: #d81b60;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center;">
+        <div style="background: white; padding: 30px; border-radius: 10px; text-align: center;">
+            <h3>Зареждане...</h3>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <h1>FFM<span>Club</span></h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="dashboard.html" class="active">Dashboard</a></li>
+                <li><a href="browse.html">Разглеждай</a></li>
+                <li><a href="messages.html">Съобщения <span id="unread-count" class="unread-badge" style="display: none;">0</span></a></li>
+                <li><a href="likes.html">Likes</a></li>
+                <li><a href="#" id="logout-btn" class="btn-register">Изход</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Dashboard Content -->
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html" class="active">🏠 Начало</a></li>
+                <li><a href="profile.html">👤 Моят профил</a></li>
+                <li><a href="browse.html">🔍 Разглеждай</a></li>
+                <li><a href="messages.html">💬 Съобщения</a></li>
+                <li><a href="likes.html">❤️ Likes</a></li>
+                <li><a href="matches.html">✨ Matches</a></li>
+                <li><a href="favorites.html">⭐ Favorites</a></li>
+                <li><a href="settings.html">⚙️ Настройки</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- User Profile Header -->
+            <div class="user-profile-header">
+                <div class="profile-photo-container">
+                    <div class="profile-photo" id="profile-photo">👤</div>
+                    <button class="upload-photo-btn" id="upload-photo-btn">📷</button>
+                    <input type="file" id="photo-input" accept="image/*" style="display: none;">
+                </div>
+                <div class="profile-info-header">
+                    <h2 id="user-name">Зареждане...</h2>
+                    <p id="user-info" style="color: #666;"></p>
+                    <div class="profile-stats">
+                        <div class="stat">
+                            <div class="stat-number" id="profile-views">0</div>
+                            <div class="stat-label">Прегледи</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number" id="likes-count">0</div>
+                            <div class="stat-label">Likes</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number" id="matches-count">0</div>
+                            <div class="stat-label">Matches</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Matches -->
+            <div class="matches-container">
+                <h3>Нови Matches 🎉</h3>
+                <div id="matches-list">
+                    <p style="color: #666;">Зареждане...</p>
+                </div>
+            </div>
+
+            <!-- Recent Messages -->
+            <div class="messages-container">
+                <h3>Последни съобщения</h3>
+                <div id="messages-list">
+                    <p style="color: #666;">Зареждане...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="about.html">За нас</a>
+                <a href="contact.html">Контакти</a>
+                <a href="#">Условия за ползване</a>
+                <a href="#">Поверителност</a>
+            </div>
+            <p>&copy; 2026 FFM Club. Всички права запазени.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script type="module">
+        import { getCurrentUser, checkAuthState, logoutUser, getUserProfile, uploadProfilePhoto } from './js/auth.js';
+        import { getMatches, getUserLikes } from './js/database.js';
+        import { getUserConversations, getUnreadCount } from './js/chat.js';
+
+        const loading = document.getElementById('loading');
+
+        // Check if user is logged in
+        checkAuthState(async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Load user data
+            await loadUserData(user);
+        });
+
+        async function loadUserData(user) {
+            loading.style.display = 'flex';
+
+            try {
+                // Get user profile
+                const profileResult = await getUserProfile(user.uid);
+                
+                if (profileResult.success) {
+                    const userData = profileResult.data;
+                    
+                    // Update UI
+                    document.getElementById('user-name').textContent = userData.username;
+                    document.getElementById('user-info').textContent = `${userData.age} г. • ${userData.city} • ${userData.accountType === 'couple' ? 'Двойка' : 'Жена'}`;
+                    document.getElementById('profile-views').textContent = userData.profileViews || 0;
+                    
+                    // Load photo if exists
+                    if (userData.photoURL) {
+                        const photoDiv = document.getElementById('profile-photo');
+                        photoDiv.innerHTML = `<img src="${userData.photoURL}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+                    }
+                    
+                    // Load likes count
+                    const likes = userData.likes || [];
+                    document.getElementById('likes-count').textContent = likes.length;
+                    
+                    // Load matches
+                    const matchesResult = await getMatches(user.uid);
+                    if (matchesResult.success) {
+                        document.getElementById('matches-count').textContent = matchesResult.matches.length;
+                        displayMatches(matchesResult.matches);
+                    }
+                    
+                    // Load conversations
+                    const conversationsResult = await getUserConversations(user.uid);
+                    if (conversationsResult.success) {
+                        displayConversations(conversationsResult.conversations, user.uid);
+                    }
+                    
+                    // Load unread count
+                    const unreadResult = await getUnreadCount(user.uid);
+                    if (unreadResult.success && unreadResult.count > 0) {
+                        const badge = document.getElementById('unread-count');
+                        badge.textContent = unreadResult.count;
+                        badge.style.display = 'inline';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+
+            loading.style.display = 'none';
+        }
+
+        function displayMatches(matches) {
+            const matchesList = document.getElementById('matches-list');
+            
+            if (matches.length === 0) {
+                matchesList.innerHTML = '<p style="color: #666;">Все още нямаш matches. Продължавай да лайкваш профили!</p>';
+                return;
+            }
+            
+            matchesList.innerHTML = '';
+            matches.slice(0, 3).forEach(match => {
+                const matchDiv = document.createElement('div');
+                matchDiv.className = 'message-item';
+                matchDiv.innerHTML = `
+                    <div class="message-avatar">${match.photoURL ? `<img src="${match.photoURL}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">` : '👤'}</div>
+                    <div class="message-content">
+                        <div class="message-name">${match.username}</div>
+                        <div class="message-preview">${match.city} • ${match.age} г.</div>
+                    </div>
+                `;
+                matchDiv.onclick = () => window.location.href = `chat.html?userId=${match.id}`;
+                matchesList.appendChild(matchDiv);
+            });
+        }
+
+        function displayConversations(conversations, currentUserId) {
+            const messagesList = document.getElementById('messages-list');
+            
+            if (conversations.length === 0) {
+                messagesList.innerHTML = '<p style="color: #666;">Все още нямаш съобщения.</p>';
+                return;
+            }
+            
+            messagesList.innerHTML = '';
+            conversations.slice(0, 5).forEach(conv => {
+                const otherUserId = conv.participants.find(id => id !== currentUserId);
+                
+                const convDiv = document.createElement('div');
+                convDiv.className = 'message-item';
+                convDiv.innerHTML = `
+                    <div class="message-avatar">👤</div>
+                    <div class="message-content">
+                        <div class="message-name">Conversation</div>
+                        <div class="message-preview">${conv.lastMessage || 'Няма съобщения'}</div>
+                    </div>
+                    <div class="message-time">Преди ${getTimeAgo(conv.lastMessageTime)}</div>
+                `;
+                convDiv.onclick = () => window.location.href = `chat.html?userId=${otherUserId}`;
+                messagesList.appendChild(convDiv);
+            });
+        }
+
+        function getTimeAgo(timestamp) {
+            if (!timestamp) return '';
+            // Simple time ago implementation
+            return 'малко';
+        }
+
+        // Photo upload
+        document.getElementById('upload-photo-btn').addEventListener('click', () => {
+            document.getElementById('photo-input').click();
+        });
+
+        document.getElementById('photo-input').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            loading.style.display = 'flex';
+            
+            const user = getCurrentUser();
+            const result = await uploadProfilePhoto(user.uid, file);
+            
+            if (result.success) {
+                const photoDiv = document.getElementById('profile-photo');
+                photoDiv.innerHTML = `<img src="${result.photoURL}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+                alert('Снимката е качена успешно!');
+            } else {
+                alert('Грешка при качване: ' + result.error);
+            }
+            
+            loading.style.display = 'none';
+        });
+
+        // Logout
+        document.getElementById('logout-btn').addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            if (confirm('Сигурен ли си, че искаш да излезеш?')) {
+                await logoutUser();
+                window.location.href = 'index.html';
+            }
+        });
+    </script>
+</body>
+</html>

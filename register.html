@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация - FFM Club</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="loading" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; display: flex; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 30px; border-radius: 10px; text-align: center;">
+            <h3>Зареждане...</h3>
+        </div>
+    </div>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <h1>FFM<span>Club</span></h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Начало</a></li>
+                <li><a href="gallery.html">Галерия</a></li>
+                <li><a href="about.html">За нас</a></li>
+                <li><a href="register.html" class="btn-register active">Регистрация</a></li>
+                <li><a href="contact.html">Контакти</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Registration Section -->
+    <section class="register">
+        <div class="container">
+            <h2 class="section-title">Създай своя профил</h2>
+            
+            <form class="register-form" action="#" method="post">
+                <div class="form-group">
+                    <label for="account-type">Тип акаунт *</label>
+                    <select id="account-type" name="account-type" required>
+                        <option value="">Избери тип акаунт</option>
+                        <option value="couple">Двойка (търсим жена)</option>
+                        <option value="woman">Жена (търся двойки)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="username">Потребителско име *</label>
+                    <input type="text" id="username" name="username" required placeholder="Избери уникално име">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" required placeholder="твоят@email.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Парола *</label>
+                    <input type="password" id="password" name="password" required placeholder="Минимум 8 символа">
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm-password">Потвърди парола *</label>
+                    <input type="password" id="confirm-password" name="confirm-password" required placeholder="Повтори паролата">
+                </div>
+
+                <div class="form-group">
+                    <label for="age">Възраст *</label>
+                    <input type="number" id="age" name="age" min="18" max="99" required placeholder="Трябва да си 18+">
+                </div>
+
+                <div class="form-group">
+                    <label for="city">Град *</label>
+                    <select id="city" name="city" required>
+                        <option value="">Избери град</option>
+                        <option value="sofia">София</option>
+                        <option value="plovdiv">Пловдив</option>
+                        <option value="varna">Варна</option>
+                        <option value="burgas">Бургас</option>
+                        <option value="ruse">Русе</option>
+                        <option value="stara-zagora">Стара Загора</option>
+                        <option value="pleven">Плевен</option>
+                        <option value="sliven">Сливен</option>
+                        <option value="dobrich">Добрич</option>
+                        <option value="other">Друг</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="about">За мен / за нас</label>
+                    <textarea id="about" name="about" placeholder="Разкажи нещо интересно за себе си / за вас. Какво търсиш/търсите?"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="interests">Интереси</label>
+                    <input type="text" id="interests" name="interests" placeholder="Например: пътувания, музика, спорт...">
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="terms" required>
+                        Съгласен/а съм с <a href="#" style="color: #d81b60;">Условията за ползване</a> и <a href="#" style="color: #d81b60;">Политиката за поверителност</a> *
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="age-confirm" required>
+                        Потвърждавам, че съм навършил/а 18 години *
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="newsletter">
+                        Искам да получавам новини и актуализации по email
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-submit">Създай профил</button>
+
+                <p style="text-align: center; margin-top: 20px; color: #666;">
+                    Вече имаш профил? <a href="#" style="color: #d81b60; font-weight: 600;">Влез тук</a>
+                </p>
+            </form>
+
+            <!-- Info Box -->
+            <div style="max-width: 600px; margin: 40px auto; padding: 30px; background-color: #f0f7ff; border-radius: 10px; border-left: 4px solid #d81b60;">
+                <h3 style="color: #333; margin-bottom: 15px;">💡 Съвети за добър профил:</h3>
+                <ul style="color: #666; line-height: 1.8; padding-left: 20px;">
+                    <li>Избери оригинално потребителско име</li>
+                    <li>Бъди честен/а в описанието си</li>
+                    <li>Добави реална снимка след регистрация</li>
+                    <li>Потвърди профила си за да получиш badge "Верифициран"</li>
+                    <li>Бъди уважителен/на в комуникацията</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="about.html">За нас</a>
+                <a href="gallery.html">Галерия</a>
+                <a href="contact.html">Контакти</a>
+                <a href="#">Условия за ползване</a>
+                <a href="#">Поверителност</a>
+            </div>
+            <p>&copy; 2026 FFM Club. Всички права запазени.</p>
+            <p style="font-size: 14px; margin-top: 10px;">Само за лица над 18 години</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Registration -->
+    <script type="module">
+        import { registerUser } from './js/auth.js';
+
+        const registerForm = document.querySelector('.register-form');
+        const loading = document.getElementById('loading');
+
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = {
+                accountType: document.getElementById('account-type').value,
+                username: document.getElementById('username').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+                confirmPassword: document.getElementById('confirm-password').value,
+                age: parseInt(document.getElementById('age').value),
+                city: document.getElementById('city').value,
+                about: document.getElementById('about').value,
+                interests: document.getElementById('interests').value
+            };
+
+            // Validation
+            if (!formData.accountType) {
+                alert('Моля избери тип акаунт!');
+                return;
+            }
+
+            if (formData.password !== formData.confirmPassword) {
+                alert('Паролите не съвпадат!');
+                return;
+            }
+
+            if (formData.password.length < 8) {
+                alert('Паролата трябва да е минимум 8 символа!');
+                return;
+            }
+
+            if (formData.age < 18) {
+                alert('Трябва да си навършил 18 години!');
+                return;
+            }
+
+            // Show loading
+            loading.style.display = 'flex';
+
+            // Register user
+            const result = await registerUser(formData.email, formData.password, formData);
+
+            loading.style.display = 'none';
+
+            if (result.success) {
+                alert('Регистрацията е успешна! Провери email-а си за верификация.');
+                window.location.href = 'login.html';
+            } else {
+                alert('Грешка при регистрация: ' + result.error);
+            }
+        });
+    </script>
+</body>
+</html>

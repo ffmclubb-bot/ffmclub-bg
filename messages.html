@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Съобщения - FFM Club</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .messages-layout {
+            display: flex;
+            max-width: 1400px;
+            margin: 20px auto;
+            height: calc(100vh - 140px);
+            gap: 0;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+        
+        .conversations-sidebar {
+            width: 350px;
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            background: #fafafa;
+        }
+        
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            background: white;
+        }
+        
+        .sidebar-header h2 {
+            margin: 0;
+            font-size: 24px;
+            color: #333;
+        }
+        
+        .conversations-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .conversation-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            gap: 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-bottom: 1px solid #f0f0f0;
+            background: white;
+        }
+        
+        .conversation-item:hover {
+            background: #f5f5f5;
+        }
+        
+        .conversation-item.active {
+            background: linear-gradient(135deg, rgba(216, 27, 96, 0.1) 0%, rgba(142, 36, 170, 0.1) 100%);
+            border-left: 3px solid #d81b60;
+        }
+        
+        .conv-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            flex-shrink: 0;
+            position: relative;
+        }
+        
+        .online-indicator {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 12px;
+            height: 12px;
+            background: #4caf50;
+            border: 2px solid white;
+            border-radius: 50%;
+        }
+        
+        .conv-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .conv-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .conv-time {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .conv-preview {
+            font-size: 14px;
+            color: #666;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .unread-badge {
+            background: #d81b60;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .empty-state {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: #999;
+        }
+        
+        .empty-state-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        @media (max-width: 768px) {
+            .messages-layout {
+                flex-direction: column;
+                height: auto;
+                min-height: 600px;
+            }
+            
+            .conversations-sidebar {
+                width: 100%;
+                max-height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="loading" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center;">
+        <div style="background: white; padding: 30px; border-radius: 10px; text-align: center;">
+            <h3>Зареждане...</h3>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <h1>FFM<span>Club</span></h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="browse.html">Разглеждай</a></li>
+                <li><a href="messages.html" class="active">Съобщения</a></li>
+                <li><a href="likes.html">Likes</a></li>
+                <li><a href="#" id="logout-btn" class="btn-register">Изход</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Messages Layout -->
+    <div style="padding: 0 20px;">
+        <div class="messages-layout">
+            <!-- Conversations Sidebar -->
+            <div class="conversations-sidebar">
+                <div class="sidebar-header">
+                    <h2>Съобщения</h2>
+                </div>
+                <div class="conversations-list" id="conversations-list">
+                    <div style="padding: 40px 20px; text-align: center; color: #999;">
+                        Зареждане на разговори...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Area -->
+            <div class="chat-area">
+                <div class="empty-state">
+                    <div class="empty-state-icon">💬</div>
+                    <h3>Избери разговор</h3>
+                    <p>Избери разговор от лявата страна за да започнеш да чатиш</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer" style="margin-top: 20px;">
+        <div class="footer-content">
+            <p>&copy; 2026 FFM Club. Всички права запазени.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script type="module">
+        import { getCurrentUser, checkAuthState, getUserProfile } from './js/auth.js';
+        import { getUserById } from './js/database.js';
+        import { getUserConversations } from './js/chat.js';
+
+        let currentUser = null;
+        const loading = document.getElementById('loading');
+
+        // Check auth
+        checkAuthState(async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            currentUser = user;
+            await loadConversations();
+        });
+
+        async function loadConversations() {
+            loading.style.display = 'flex';
+            
+            const result = await getUserConversations(currentUser.uid);
+            
+            loading.style.display = 'none';
+            
+            if (result.success) {
+                displayConversations(result.conversations);
+            } else {
+                console.error('Error loading conversations:', result.error);
+            }
+        }
+
+        async function displayConversations(conversations) {
+            const list = document.getElementById('conversations-list');
+            
+            if (conversations.length === 0) {
+                list.innerHTML = `
+                    <div style="padding: 40px 20px; text-align: center;">
+                        <div style="font-size: 50px; margin-bottom: 15px;">💬</div>
+                        <p style="color: #666;">Все още нямаш съобщения</p>
+                        <p style="color: #999; font-size: 14px;">Започни разговор от страницата "Разглеждай"</p>
+                        <a href="browse.html" style="display: inline-block; margin-top: 15px; padding: 10px 20px; background: linear-gradient(135deg, #d81b60 0%, #8e24aa 100%); color: white; text-decoration: none; border-radius: 20px;">Разглеждай профили</a>
+                    </div>
+                `;
+                return;
+            }
+            
+            list.innerHTML = '';
+            
+            // Load user data for each conversation
+            for (const conv of conversations) {
+                const otherUserId = conv.participants.find(id => id !== currentUser.uid);
+                const userResult = await getUserById(otherUserId);
+                
+                if (userResult.success) {
+                    const otherUser = userResult.user;
+                    
+                    const convItem = document.createElement('div');
+                    convItem.className = 'conversation-item';
+                    convItem.innerHTML = `
+                        <div class="conv-avatar">
+                            ${otherUser.photoURL ? 
+                                `<img src="${otherUser.photoURL}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">` : 
+                                '👤'
+                            }
+                        </div>
+                        <div class="conv-info">
+                            <div class="conv-name">
+                                <span>${otherUser.username}</span>
+                                <span class="conv-time">${formatTime(conv.lastMessageTime)}</span>
+                            </div>
+                            <div class="conv-preview">${conv.lastMessage || 'Няма съобщения'}</div>
+                        </div>
+                    `;
+                    
+                    convItem.onclick = () => {
+                        window.location.href = `chat.html?userId=${otherUserId}`;
+                    };
+                    
+                    list.appendChild(convItem);
+                }
+            }
+        }
+
+        function formatTime(timestamp) {
+            if (!timestamp) return '';
+            
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            const now = new Date();
+            const diff = now - date;
+            
+            if (diff < 60000) return 'Сега';
+            if (diff < 3600000) return Math.floor(diff / 60000) + ' мин';
+            if (diff < 86400000) return Math.floor(diff / 3600000) + ' ч';
+            if (diff < 172800000) return 'Вчера';
+            
+            return date.toLocaleDateString('bg-BG', { day: 'numeric', month: 'short' });
+        }
+    </script>
+</body>
+</html>

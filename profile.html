@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Моят профил - FFM Club</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .dashboard-container {
+            display: flex;
+            max-width: 1400px;
+            margin: 20px auto;
+            gap: 20px;
+            padding: 0 20px;
+        }
+        .sidebar {
+            width: 250px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 80px;
+        }
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar-menu li {
+            margin-bottom: 10px;
+        }
+        .sidebar-menu a {
+            display: block;
+            padding: 12px 15px;
+            color: #333;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: linear-gradient(135deg, #d81b60 0%, #8e24aa 100%);
+            color: white;
+        }
+        .profile-container {
+            flex: 1;
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+        .profile-header {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        .profile-photo-section {
+            text-align: center;
+        }
+        .profile-photo-large {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            color: white;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .change-photo-btn {
+            background: linear-gradient(135deg, #d81b60 0%, #8e24aa 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .profile-info-section {
+            flex: 1;
+        }
+        .profile-name-large {
+            font-size: 32px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .profile-meta {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 20px;
+            color: #666;
+        }
+        .profile-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .profile-stats {
+            display: flex;
+            gap: 40px;
+            margin-top: 25px;
+        }
+        .stat-box {
+            text-align: center;
+            padding: 15px 25px;
+            background: #f9f9f9;
+            border-radius: 10px;
+        }
+        .stat-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #d81b60;
+        }
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .profile-section {
+            margin-bottom: 35px;
+        }
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .profile-text {
+            color: #666;
+            line-height: 1.8;
+            font-size: 15px;
+        }
+        .edit-profile-btn {
+            background: linear-gradient(135deg, #d81b60 0%, #8e24aa 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: transform 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .edit-profile-btn:hover {
+            transform: translateY(-2px);
+        }
+        .verified-badge-large {
+            background: #4caf50;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center;">
+        <div style="background: white; padding: 30px; border-radius: 10px; text-align: center;">
+            <h3>Зареждане...</h3>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <h1>FFM<span>Club</span></h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="browse.html">Разглеждай</a></li>
+                <li><a href="messages.html">Съобщения</a></li>
+                <li><a href="likes.html">Likes</a></li>
+                <li><a href="#" id="logout-btn" class="btn-register">Изход</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Profile Content -->
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html">🏠 Начало</a></li>
+                <li><a href="profile.html" class="active">👤 Моят профил</a></li>
+                <li><a href="browse.html">🔍 Разглеждай</a></li>
+                <li><a href="messages.html">💬 Съобщения</a></li>
+                <li><a href="likes.html">❤️ Likes</a></li>
+                <li><a href="matches.html">✨ Matches</a></li>
+                <li><a href="favorites.html">⭐ Favorites</a></li>
+                <li><a href="settings.html">⚙️ Настройки</a></li>
+            </ul>
+        </aside>
+
+        <!-- Profile Container -->
+        <div class="profile-container">
+            <!-- Profile Header -->
+            <div class="profile-header">
+                <div class="profile-photo-section">
+                    <div class="profile-photo-large" id="profile-photo">👤</div>
+                    <button class="change-photo-btn" id="change-photo-btn">📷 Смени снимката</button>
+                    <input type="file" id="photo-input" accept="image/*" style="display: none;">
+                </div>
+                
+                <div class="profile-info-section">
+                    <h1 class="profile-name-large" id="profile-name">Зареждане...</h1>
+                    <div class="profile-meta">
+                        <div class="profile-meta-item">
+                            <span>📍</span>
+                            <span id="profile-city">-</span>
+                        </div>
+                        <div class="profile-meta-item">
+                            <span>👤</span>
+                            <span id="profile-type">-</span>
+                        </div>
+                        <div class="profile-meta-item">
+                            <span>🎂</span>
+                            <span id="profile-age">-</span>
+                        </div>
+                    </div>
+                    
+                    <div id="verified-badge-container"></div>
+                    
+                    <div class="profile-stats">
+                        <div class="stat-box">
+                            <div class="stat-number" id="views-count">0</div>
+                            <div class="stat-label">Прегледи</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number" id="likes-count">0</div>
+                            <div class="stat-label">Likes</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number" id="matches-count">0</div>
+                            <div class="stat-label">Matches</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Details -->
+            <div class="profile-section">
+                <h3 class="section-title">📝 За мен / За нас</h3>
+                <p class="profile-text" id="profile-about">Зареждане...</p>
+            </div>
+
+            <div class="profile-section">
+                <h3 class="section-title">🎯 Интереси</h3>
+                <p class="profile-text" id="profile-interests">Зареждане...</p>
+            </div>
+
+            <div style="text-align: center; margin-top: 40px;">
+                <a href="settings.html" class="edit-profile-btn">✏️ Редактирай профила</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2026 FFM Club. Всички права запазени.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script type="module">
+        import { getCurrentUser, checkAuthState, getUserProfile, uploadProfilePhoto, logoutUser } from './js/auth.js';
+        import { getMatches } from './js/database.js';
+
+        const loading = document.getElementById('loading');
+        let currentUser = null;
+
+        checkAuthState(async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            currentUser = user;
+            await loadProfile();
+        });
+
+        async function loadProfile() {
+            loading.style.display = 'flex';
+            
+            const result = await getUserProfile(currentUser.uid);
+            
+            if (result.success) {
+                const userData = result.data;
+                
+                document.getElementById('profile-name').textContent = userData.username || 'Без име';
+                document.getElementById('profile-city').textContent = userData.city || '-';
+                document.getElementById('profile-type').textContent = userData.accountType === 'couple' ? 'Двойка' : 'Жена';
+                document.getElementById('profile-age').textContent = userData.age ? userData.age + ' г.' : '-';
+                document.getElementById('profile-about').textContent = userData.about || 'Няма описание';
+                document.getElementById('profile-interests').textContent = userData.interests || 'Няма посочени интереси';
+                
+                document.getElementById('views-count').textContent = userData.profileViews || 0;
+                document.getElementById('likes-count').textContent = (userData.likes || []).length;
+                
+                if (userData.photoURL) {
+                    document.getElementById('profile-photo').innerHTML = `<img src="${userData.photoURL}" style="width: 100%; height: 100%; object-fit: cover;">`;
+                }
+                
+                if (userData.verified) {
+                    document.getElementById('verified-badge-container').innerHTML = '<div class="verified-badge-large">✓ Верифициран профил</div>';
+                }
+                
+                // Load matches count
+                const matchesResult = await getMatches(currentUser.uid);
+                if (matchesResult.success) {
+                    document.getElementById('matches-count').textContent = matchesResult.matches.length;
+                }
+            }
+            
+            loading.style.display = 'none';
+        }
+
+        // Change photo
+        document.getElementById('change-photo-btn').addEventListener('click', () => {
+            document.getElementById('photo-input').click();
+        });
+
+        document.getElementById('photo-input').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            loading.style.display = 'flex';
+            
+            const result = await uploadProfilePhoto(currentUser.uid, file);
+            
+            if (result.success) {
+                document.getElementById('profile-photo').innerHTML = `<img src="${result.photoURL}" style="width: 100%; height: 100%; object-fit: cover;">`;
+                alert('✅ Снимката е качена успешно!');
+            } else {
+                alert('❌ Грешка при качване: ' + result.error);
+            }
+            
+            loading.style.display = 'none';
+        });
+
+        // Logout
+        document.getElementById('logout-btn').addEventListener('click', async (e) => {
+            e.preventDefault();
+            await logoutUser();
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>
