@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Табло - FFM Club</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="loading" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center;">
+        <div style="background: white; padding: 30px; border-radius: 10px; text-align: center;">
+            <h3>Зареждане...</h3>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <h1>FFM<span>Club</span></h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Начало</a></li>
+                <li><a href="gallery.html">Галерия</a></li>
+                <li><a href="about.html">За нас</a></li>
+                <li><a href="dashboard.html" class="btn-register active">Профил</a></li>
+                <li><a href="#" id="logout-btn" style="color: #fff; font-weight: 600;">Изход</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Dashboard Section -->
+    <section class="register">
+        <div class="container">
+            <h2 class="section-title">Добре дошъл/дошла!</h2>
+            
+            <div style="max-width: 800px; margin: 0 auto; padding: 30px; background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                <div id="user-info" style="margin-bottom: 30px;">
+                    <h3 style="color: #333; margin-bottom: 15px;">Твоят профил</h3>
+                    <div id="user-details" style="color: #666;">
+                        <p><strong>Email:</strong> <span id="user-email">Зареждане...</span></p>
+                        <p><strong>Потребителско име:</strong> <span id="user-username">Зареждане...</span></p>
+                        <p><strong>Тип акаунт:</strong> <span id="user-account-type">Зареждане...</span></p>
+                        <p><strong>Град:</strong> <span id="user-city">Зареждане...</span></p>
+                        <p><strong>Възраст:</strong> <span id="user-age">Зареждане...</span></p>
+                    </div>
+                </div>
+
+                <div style="background-color: #f0f7ff; padding: 20px; border-radius: 8px; border-left: 4px solid #d81b60;">
+                    <h4 style="color: #333; margin-bottom: 10px;">📧 Верификация</h4>
+                    <p style="color: #666;" id="verification-status">Проверяваме статуса на верификацията...</p>
+                </div>
+
+                <div style="margin-top: 30px;">
+                    <h4 style="color: #333; margin-bottom: 15px;">Бързи действия:</h4>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                        <button onclick="alert('Тази функция скоро ще бъде налична!')" style="padding: 12px 24px; background: #d81b60; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                            Редактирай профил
+                        </button>
+                        <button onclick="alert('Тази функция скоро ще бъде налична!')" style="padding: 12px 24px; background: #333; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                            Разгледай профили
+                        </button>
+                        <button onclick="alert('Тази функция скоро ще бъде налична!')" style="padding: 12px 24px; background: #4caf50; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                            Съобщения
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="about.html">За нас</a>
+                <a href="gallery.html">Галерия</a>
+                <a href="contact.html">Контакти</a>
+                <a href="#">Условия заползване</a>
+                <a href="#">Поверителност</a>
+            </div>
+            <p>&copy; 2026 FFM Club. Всички права запазени.</p>
+            <p style="font-size: 14px; margin-top: 10px;">Само за лица над 18 години</p>
+        </div>
+    </footer>
+
+    <!-- Load Firebase and App Scripts as ES6 Modules -->
+    <script type="module">
+        // Import Firebase configuration and auth functions
+        import { auth } from './js/firebase-config.js';
+        import { protectPage, getCurrentUserData, logoutUser } from './js/auth.js';
+
+        // Protect this page - redirect to login if not authenticated
+        protectPage();
+
+        // Get DOM elements
+        const loading = document.getElementById('loading');
+        const logoutBtn = document.getElementById('logout-btn');
+
+        // Load user data
+        async function loadUserData() {
+            loading.style.display = 'flex';
+            
+            const userData = await getCurrentUserData();
+            
+            loading.style.display = 'none';
+
+            if (userData) {
+                // Display user information
+                document.getElementById('user-email').textContent = userData.email || 'Не е указан';
+                document.getElementById('user-username').textContent = userData.username || 'Не е указано';
+                document.getElementById('user-account-type').textContent = 
+                    userData.accountType === 'couple' ? 'Двойка (търсим жена)' : 
+                    userData.accountType === 'woman' ? 'Жена (търся двойки)' : 
+                    'Не е указан';
+                document.getElementById('user-city').textContent = userData.city || 'Не е указан';
+                document.getElementById('user-age').textContent = userData.age || 'Не е указана';
+
+                // Check email verification status
+                const verificationStatus = document.getElementById('verification-status');
+                if (userData.emailVerified) {
+                    verificationStatus.innerHTML = '✅ Email-ът ти е верифициран!';
+                    verificationStatus.style.color = '#4caf50';
+                } else {
+                    verificationStatus.innerHTML = '⚠️ Моля, провери email-а си и кликни на линка за верификация.';
+                    verificationStatus.style.color = '#ff9800';
+                }
+            }
+        }
+
+        // Handle logout
+        logoutBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            if (confirm('Сигурен ли си, че искаш да излезеш?')) {
+                loading.style.display = 'flex';
+                const result = await logoutUser();
+                loading.style.display = 'none';
+                
+                if (result.success) {
+                    window.location.href = 'index.html';
+                } else {
+                    alert('Грешка при изход: ' + result.error);
+                }
+            }
+        });
+
+        // Load user data when page loads
+        loadUserData();
+    </script>
+
+    <!-- Load main app.js as module -->
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>

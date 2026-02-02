@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Контакти - FFM Club</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <h1>FFM<span>Club</span></h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Начало</a></li>
+                <li><a href="gallery.html">Галерия</a></li>
+                <li><a href="about.html">За нас</a></li>
+                <li><a href="register.html" class="btn-register">Регистрация</a></li>
+                <li><a href="contact.html" class="active">Контакти</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Contact Hero -->
+    <section class="page-hero">
+        <div class="container">
+            <h1>Свържи се с нас</h1>
+            <p>Имаш въпроси? Ние сме тук, за да помогнем!</p>
+        </div>
+    </section>
+
+    <!-- Contact Content -->
+    <section class="contact-section">
+        <div class="container">
+            <div class="contact-grid">
+                <!-- Contact Form -->
+                <div class="contact-form-wrapper">
+                    <h2>Изпрати съобщение</h2>
+                    <form class="contact-form" id="contact-form">
+                        <div class="form-group">
+                            <label for="name">Име *</label>
+                            <input type="text" id="name" name="name" required placeholder="Твоето име">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email *</label>
+                            <input type="email" id="email" name="email" required placeholder="твоят@email.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="subject">Тема *</label>
+                            <select id="subject" name="subject" required>
+                                <option value="">Избери тема</option>
+                                <option value="general">Общ въпрос</option>
+                                <option value="technical">Техническа поддръжка</option>
+                                <option value="verification">Верификация на профил</option>
+                                <option value="report">Докладване на проблем</option>
+                                <option value="partnership">Партньорство</option>
+                                <option value="other">Друго</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="message">Съобщение *</label>
+                            <textarea id="message" name="message" required placeholder="Напиши твоето съобщение тук..." rows="6"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn-submit">Изпрати съобщение</button>
+                    </form>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="contact-info">
+                    <h2>Информация за контакт</h2>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">📧</div>
+                        <div>
+                            <h3>Email</h3>
+                            <p><a href="mailto:info@ffmclub.bg">info@ffmclub.bg</a></p>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="contact-icon">💬</div>
+                        <div>
+                            <h3>Поддръжка</h3>
+                            <p><a href="mailto:support@ffmclub.bg">support@ffmclub.bg</a></p>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="contact-icon">🕐</div>
+                        <div>
+                            <h3>Работно време</h3>
+                            <p>Понеделник - Петък: 9:00 - 18:00</p>
+                            <p>Събота - Неделя: 10:00 - 16:00</p>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="contact-icon">🌍</div>
+                        <div>
+                            <h3>Локация</h3>
+                            <p>София, България</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-box">
+                        <h3>Често задавани въпроси</h3>
+                        <p>Преди да се свържеш с нас, провери нашата <a href="#" style="color: #667eea; font-weight: 600;">FAQ секция</a>, където може да намериш отговори на най-често задаваните въпроси.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="about.html">За нас</a>
+                <a href="gallery.html">Галерия</a>
+                <a href="contact.html">Контакти</a>
+                <a href="#">Условия заползване</a>
+                <a href="#">Поверителност</a>
+            </div>
+            <p>&copy; 2026 FFM Club. Всички права запазени.</p>
+            <p style="font-size: 14px; margin-top: 10px;">Само за лица над 18 години</p>
+        </div>
+    </footer>
+
+    <!-- Load main app.js as module -->
+    <script type="module" src="js/app.js"></script>
+
+    <!-- Contact Form Script -->
+    <script>
+        const contactForm = document.getElementById('contact-form');
+        
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                subject: document.getElementById('subject').value,
+                message: document.getElementById('message').value
+            };
+            
+            // Here you would normally send the data to your backend
+            console.log('Form data:', formData);
+            
+            alert('✅ Благодарим за съобщението! Ще се свържем с теб скоро.');
+            contactForm.reset();
+        });
+    </script>
+</body>
+</html>
